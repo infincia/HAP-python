@@ -8,8 +8,8 @@ import struct
 import subprocess
 
 from .accessory import Accessory
-import loader
-import tlv
+from . import loader
+from . import tlv
 
 
 logger = logging.getLogger(__name__)
@@ -348,9 +348,9 @@ class CameraAccessory(Accessory):
 
         serv_loader = loader.get_serv_loader()
         self.add_service(
-            serv_loader.get('CameraControl'))
+            serv_loader.get_service('CameraControl'))
 
-        self.management_service = serv_loader.get('CameraRTPStreamManagement')
+        self.management_service = serv_loader.get_service('CameraRTPStreamManagement')
         self.add_service(self.management_service)
 
         self.management_service.get_characteristic('StreamingStatus')\
