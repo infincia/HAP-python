@@ -200,6 +200,15 @@ class CameraAccessory(Accessory):
         'localrtcpport={local_video_port}&pkt_size=1378')
     '''Template for the ffmpeg command.'''
 
+    FFMPEG_PI_CAMERA_CMD = ('ffmpeg -re '
+        '-f video4linux2 -input_format h264 -video_size ${width}x${height} --framerate 29.970000  -i {camera_source} '
+        '-vcodec copy -an -payload_type 99 -an -b:v {bitrate}k -bufsize {bitrate}k '
+        '-ssrc {video_ssrc} -f rtp '
+        '-srtp_out_suite AES_CM_128_HMAC_SHA1_80 -srtp_out_params {video_srtp_key} '
+        'srtp://{address}:{video_port}?rtcpport={video_port}&'
+        'localrtcpport={local_video_port}&pkt_size=1378')
+    '''Template for the ffmpeg pi camera command.'''
+
     @staticmethod
     def get_supported_rtp_config(support_srtp):
         '''XXX
@@ -434,7 +443,7 @@ class CameraAccessory(Accessory):
         video_max_bitrate = video_max_bitrate or 300
         fps = min(fps, 30)
 
-        cmd = self.FFMPEG_CMD.format({
+        cmd = self.FFMPEG_PI_CAMERA_CMD.format({
             'camera_source': '0:0',
             'address': session_info['address'],
             'video_port': session_info['video_port'],
